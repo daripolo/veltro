@@ -1,30 +1,26 @@
 import { createClient, type GenericCtx } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
+import { betterAuth, type BetterAuthOptions } from "better-auth/minimal";
+import { Resend } from "resend";
 import { components } from "./_generated/api";
 import { DataModel } from "./_generated/dataModel";
 import { internalAction, query } from "./_generated/server";
 import authConfig from "./auth.config";
 import authSchema from "./betterAuth/schema";
-import { Resend } from "resend";
-import { betterAuth, type BetterAuthOptions } from "better-auth/minimal";
-
 
 // The component client has methods needed for integrating Convex with Better Auth,
 // as well as helper methods for general use.
-export const authComponent = createClient<DataModel, typeof authSchema>(
-  components.betterAuth,
-  {
+export const authComponent = createClient<DataModel, typeof authSchema>(components.betterAuth, {
     local: {
-      schema: authSchema,
+        schema: authSchema,
     },
     verbose: false,
-  },
-);
+});
 
-const siteUrl = process.env.SITE_URL || "http://localhost:3001"
+const siteUrl = process.env.SITE_URL || "http://localhost:3001";
 
 function baseEmailHtml(content: string): string {
-  return `<!DOCTYPE html>
+    return `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"></head>
 <body style="margin:0;padding:16px;background-color:#0f0f0f;font-family:Inter,system-ui,sans-serif;color:#ffffff">
@@ -41,7 +37,7 @@ function baseEmailHtml(content: string): string {
 }
 
 function verifyEmailHtml(name: string, url: string): string {
-  return baseEmailHtml(`
+    return baseEmailHtml(`
     <tr><td style="font-size:24px;font-weight:400;text-align:center;padding:24px 0;color:#ffffff">Verify your email address</td></tr>
     <tr><td style="color:#A1A1AA;font-size:14px;padding-bottom:8px">Hello ${name},</td></tr>
     <tr><td style="color:#A1A1AA;font-size:14px;padding-bottom:24px">Thanks for starting the Veltro account creation process. Please verify your email to continue.</td></tr>
@@ -53,7 +49,7 @@ function verifyEmailHtml(name: string, url: string): string {
 }
 
 function resetPasswordHtml(name: string, url: string): string {
-  return baseEmailHtml(`
+    return baseEmailHtml(`
     <tr><td style="font-size:24px;font-weight:400;text-align:center;padding:24px 0;color:#ffffff">Reset your password</td></tr>
     <tr><td style="color:#A1A1AA;font-size:14px;padding-bottom:8px">Hello ${name},</td></tr>
     <tr><td style="color:#A1A1AA;font-size:14px;padding-bottom:16px">Someone recently requested a password change for your Veltro account. If this was you, you can set a new password here:</td></tr>
@@ -66,70 +62,61 @@ function resetPasswordHtml(name: string, url: string): string {
 }
 
 export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
-  return {
-    baseURL: siteUrl,
-    trustedOrigins: [
-      "http://localhost:3000",
-      "http://localhost:3001",
-      "http://127.0.0.1:3001",
-      "https://finguardonline.com",
-    ],
-    socialProviders: {
-      google: {
-        clientId: process.env.GOOGLE_CLIENT_ID as string,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-      },
-    },
-    database: authComponent.adapter(ctx),
-    emailAndPassword: {
-      enabled: true,
-      sendResetPassword: async ({ user, url }) => {
-        const resend = new Resend(process.env.RESEND_API_KEY!);
-        const html = resetPasswordHtml(user.name, url);
-        await resend.emails.send({
-          from: "Veltro <onboarding@arxforthdigital.com>",
-          to: user.email,
-          subject: "Reset your password",
-          html,
-        });
-      },
-    },
-    emailVerification: {
-      sendOnSignUp: true,
-      sendVerificationEmail: async ({ user, url }) => {
-        const resend = new Resend(process.env.RESEND_API_KEY!);
-        const html = verifyEmailHtml(user.name, url);
-        await resend.emails.send({
-          from: "Veltro <onboarding@arxforthdigital.com>",
-          to: user.email,
-          subject: "Verify your email",
-          html,
-        });
-      },
-    },
-    plugins: [
-      convex({ authConfig }),
-    ],
-  }  satisfies BetterAuthOptions;
+    return {
+        baseURL: siteUrl,
+        trustedOrigins: ["http://localhost:3000", "https://veltroonline.online", "veltroonline.online"],
+        socialProviders: {
+            google: {
+                clientId: process.env.GOOGLE_CLIENT_ID as string,
+                clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+            },
+        },
+        database: authComponent.adapter(ctx),
+        emailAndPassword: {
+            enabled: true,
+            sendResetPassword: async ({ user, url }) => {
+                const resend = new Resend(process.env.RESEND_API_KEY!);
+                const html = resetPasswordHtml(user.name, url);
+                await resend.emails.send({
+                    from: "Veltro <onboarding@arxforthdigital.com>",
+                    to: user.email,
+                    subject: "Reset your password",
+                    html,
+                });
+            },
+        },
+        emailVerification: {
+            sendOnSignUp: true,
+            sendVerificationEmail: async ({ user, url }) => {
+                const resend = new Resend(process.env.RESEND_API_KEY!);
+                const html = verifyEmailHtml(user.name, url);
+                await resend.emails.send({
+                    from: "Veltro <onboarding@arxforthdigital.com>",
+                    to: user.email,
+                    subject: "Verify your email",
+                    html,
+                });
+            },
+        },
+        plugins: [convex({ authConfig })],
+    } satisfies BetterAuthOptions;
 };
 
-
-export const createAuth = (ctx: GenericCtx<DataModel>) =>
-  betterAuth(createAuthOptions(ctx));
+export const createAuth = (ctx: GenericCtx<DataModel>) => betterAuth(createAuthOptions(ctx));
 
 export const { getAuthUser } = authComponent.clientApi();
 
 export const rotateKeys = internalAction({
-  args: {},
-  handler: async (ctx) => {
-    const auth = createAuth(ctx);
-    return auth.api.rotateKeys();
-  },
+    args: {},
+    handler: async ctx => {
+        const auth = createAuth(ctx);
+        return auth.api.rotateKeys();
+    },
 });
 
 export const getCurrentUser = query({
-  args: {},
-  handler: async (ctx) => {
-    return authComponent.safeGetAuthUser(ctx);
-  },
+    args: {},
+    handler: async ctx => {
+        return authComponent.safeGetAuthUser(ctx);
+    },
 });
