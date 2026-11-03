@@ -149,7 +149,7 @@ export default function SupportPage() {
                 <h3 className="text-xl font-bold mb-2 text-slate-900">Email Support</h3>
                 <p className="text-slate-500 text-sm mb-4">Send us an email and we'll get back to you within 24 hours.</p>
                 <button className="w-full py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-primary/30">
-                  support@arxforthdigital.com
+                  support@veltroonline.online
                 </button>
               </div>
 

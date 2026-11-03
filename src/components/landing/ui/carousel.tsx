@@ -241,19 +241,23 @@ function Dots({
   onSelect: (index: number) => void
 }) {
   return (
-    <span className="flex items-center gap-2">
+    <span className="flex items-center gap-1">
       {Array.from({ length: count }, (_, position) => (
         <button
           key={position}
           type="button"
           onClick={() => onSelect(position)}
           aria-label={`Go to item ${position + 1} of ${count}`}
-          aria-current={position === index}
-          className={cn(
-            "size-1.5 rounded-full transition-colors",
-            position === index ? "bg-signal" : "bg-white/25 hover:bg-white/50",
-          )}
-        />
+          aria-current={position === index ? "true" : undefined}
+          className="group grid size-6 place-items-center rounded-full outline-none transition-colors focus-visible:ring-2 focus-visible:ring-signal"
+        >
+          <span
+            className={cn(
+              "size-1.5 rounded-full transition-colors",
+              position === index ? "bg-signal" : "bg-white/25 group-hover:bg-white/50",
+            )}
+          />
+        </button>
       ))}
     </span>
   )

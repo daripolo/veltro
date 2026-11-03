@@ -23,7 +23,7 @@ export function FooterBottomBar({ copyright, note, links }: FooterBottomBarProps
           <Link
             key={link.label}
             href={link.href}
-            className="rounded-sm text-xs text-ink-muted outline-none transition-colors hover:text-ink focus-visible:ring-2 focus-visible:ring-signal"
+            className="rounded-sm py-1 text-xs text-ink-muted outline-none transition-colors hover:text-ink focus-visible:ring-2 focus-visible:ring-signal"
           >
             {link.label}
           </Link>

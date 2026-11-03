@@ -35,7 +35,7 @@ export default function NotificationsPage() {
     <div className="w-full">
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">Notifications</h1>
             <p className="text-slate-500">Stay updated with your account activity.</p>
@@ -43,7 +43,7 @@ export default function NotificationsPage() {
           {notifications && notifications.length > 0 && (
             <button
               onClick={() => markAllAsRead()}
-              className="px-4 py-2 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-sm font-medium text-primary transition-colors flex items-center gap-2"
+              className="self-start whitespace-nowrap px-4 py-2 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-sm font-medium text-primary transition-colors flex items-center gap-2 sm:self-auto"
             >
               <RiIcon className="ri-check-double-line" />
               Mark all as read

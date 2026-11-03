@@ -16,7 +16,7 @@ import { Statement } from "@/src/components/landing/ui/statement"
 
 function Stat({ stat, align = "left" }: { stat: HeroStat; align?: "left" | "right" }) {
   return (
-    <div className={cn("w-40 border-t border-night-line pt-3", align === "right" && "text-right")}>
+    <div className={cn("w-full border-t border-night-line pt-3", align === "right" && "text-right")}>
       <dt className="text-2xl font-semibold tracking-tight text-ink">{stat.value}</dt>
       <dd className="mt-1 text-xs leading-5 text-ink-muted">{stat.label}</dd>
     </div>
@@ -111,19 +111,23 @@ export function HeroSection() {
           <CircleButton label="Previous message" onClick={() => go(-1)} size="md">
             <ArrowLeft aria-hidden />
           </CircleButton>
-          <span className="flex items-center gap-2">
+          <span className="flex items-center gap-1">
             {heroSlides.map((item, position) => (
               <button
                 key={item.eyebrow}
                 type="button"
                 onClick={() => setIndex(position)}
                 aria-label={`Show message ${position + 1} of ${total}`}
-                aria-current={position === index}
-                className={cn(
-                  "size-1.5 rounded-full transition-colors",
-                  position === index ? "bg-signal" : "bg-white/25 hover:bg-white/50",
-                )}
-              />
+                aria-current={position === index ? "true" : undefined}
+                className="group grid size-6 place-items-center rounded-full outline-none transition-colors focus-visible:ring-2 focus-visible:ring-signal"
+              >
+                <span
+                  className={cn(
+                    "size-1.5 rounded-full transition-colors",
+                    position === index ? "bg-signal" : "bg-white/25 group-hover:bg-white/50",
+                  )}
+                />
+              </button>
             ))}
           </span>
           <CircleButton label="Next message" onClick={() => go(1)} size="md">

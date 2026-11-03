@@ -71,6 +71,18 @@ html {
   }
 }
 
+/* iOS Safari zooms any focused control whose text is smaller than 16px. Keep
+   fields, selects and textareas at 16px on phone widths so the page never
+   jumps while someone is signing in or filling in a form. Rendered outside a
+   layer so it wins over the `text-sm` utilities used across the app. */
+@media (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: var(--font-sans);

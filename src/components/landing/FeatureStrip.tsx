@@ -71,7 +71,7 @@ function StripCard({ item }: { item: FeatureStripItem }) {
 
 export function FeatureStrip() {
   return (
-    <section id="products" className="border-y border-night-line bg-night-raised/40 py-12 sm:py-16">
+    <section id="products" className="scroll-mt-28 border-y border-night-line bg-night-raised/40 py-12 sm:py-16">
       <LandingContainer>
         <h2 className="sr-only">What you get with your account</h2>
         <Carousel

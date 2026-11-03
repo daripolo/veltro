@@ -140,7 +140,7 @@ export function CapabilitiesSection() {
           </div>
         </Reveal>
 
-        <div className="mt-6 grid gap-6 md:grid-cols-3">
+        <div className="mt-6 grid gap-4 sm:grid-cols-3 sm:gap-6">
           {capabilities.cards.map((card, index) => {
             const Visual = VISUALS[index] ?? MonitoringVisual
 

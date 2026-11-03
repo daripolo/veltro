@@ -20,6 +20,17 @@ export function Navbar({ todayLabel }: { todayLabel: string }) {
     return () => window.removeEventListener("keydown", onKeyDown)
   }, [open])
 
+  // Keep the page behind the mobile menu from scrolling while it is open.
+  useEffect(() => {
+    if (!open) return
+
+    const previous = document.body.style.overflow
+    document.body.style.overflow = "hidden"
+    return () => {
+      document.body.style.overflow = previous
+    }
+  }, [open])
+
   return (
     <header className="fixed inset-x-0 top-0 z-50 pt-[calc(env(safe-area-inset-top)+0.75rem)]">
       <LandingContainer>
@@ -30,7 +41,7 @@ export function Navbar({ todayLabel }: { todayLabel: string }) {
           <Link
             href={brand.homeHref}
             aria-label={`${brand.name} home`}
-            className="flex items-center gap-2 rounded-full py-1 pl-1 pr-2 outline-none focus-visible:ring-2 focus-visible:ring-signal"
+            className="flex shrink-0 items-center gap-2 rounded-full py-1 pl-1 pr-2 outline-none focus-visible:ring-2 focus-visible:ring-signal"
           >
             <span
               aria-hidden
@@ -46,7 +57,7 @@ export function Navbar({ todayLabel }: { todayLabel: string }) {
               <li key={link.label}>
                 <Link
                   href={link.href}
-                  className="inline-flex rounded-full px-3.5 py-2 text-sm text-ink-muted outline-none transition-colors hover:bg-white/5 hover:text-ink focus-visible:ring-2 focus-visible:ring-signal"
+                  className="inline-flex rounded-full px-2.5 py-2 text-sm text-ink-muted outline-none transition-colors hover:bg-white/5 hover:text-ink focus-visible:ring-2 focus-visible:ring-signal lg:px-3.5"
                 >
                   {link.label}
                 </Link>
@@ -60,23 +71,24 @@ export function Navbar({ todayLabel }: { todayLabel: string }) {
             </span>
             <Link
               href={brand.signInHref}
-              className="hidden rounded-full px-3 py-2 text-sm text-ink-muted outline-none transition-colors hover:text-ink focus-visible:ring-2 focus-visible:ring-signal sm:inline-flex"
+              className="hidden shrink-0 whitespace-nowrap rounded-full px-3 py-2 text-sm text-ink-muted outline-none transition-colors hover:text-ink focus-visible:ring-2 focus-visible:ring-signal sm:inline-flex"
             >
               Log in
             </Link>
             <Link
               href={brand.signUpHref}
-              className="inline-flex items-center gap-1.5 rounded-full bg-paper px-4 py-2 text-sm font-medium text-night outline-none transition-colors hover:bg-paper-deep focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-night"
+              className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-paper px-3.5 py-2 text-sm font-medium text-night outline-none transition-colors hover:bg-paper-deep focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-night sm:px-4"
             >
-              Open account
-              <ArrowUpRight aria-hidden className="size-4" />
+              <span className="hidden min-[380px]:inline">Open account</span>
+              <span className="min-[380px]:hidden">Open</span>
+              <ArrowUpRight aria-hidden className="size-4 shrink-0" />
             </Link>
             <button
               type="button"
               onClick={() => setOpen((value) => !value)}
               aria-expanded={open}
               aria-controls="landing-mobile-nav"
-              className="inline-flex size-9 items-center justify-center rounded-full border border-night-line text-ink outline-none transition-colors hover:border-signal hover:text-signal focus-visible:ring-2 focus-visible:ring-signal md:hidden"
+              className="inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-night-line text-ink outline-none transition-colors hover:border-signal hover:text-signal focus-visible:ring-2 focus-visible:ring-signal md:hidden"
             >
               {open ? <X aria-hidden className="size-4" /> : <Menu aria-hidden className="size-4" />}
               <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
@@ -87,7 +99,7 @@ export function Navbar({ todayLabel }: { todayLabel: string }) {
         {open ? (
           <div
             id="landing-mobile-nav"
-            className="mt-2 rounded-3xl border border-night-line bg-night-raised/95 p-3 backdrop-blur-xl md:hidden"
+            className="mt-2 max-h-[calc(100dvh-6rem)] overflow-y-auto overscroll-contain rounded-3xl border border-night-line bg-night-raised/95 p-3 backdrop-blur-xl md:hidden"
           >
             <ul className="grid gap-1">
               {navLinks.map((link) => (

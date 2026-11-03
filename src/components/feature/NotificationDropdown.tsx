@@ -111,7 +111,7 @@ export default function NotificationDropdown({
           animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
           exit={{ opacity: 0, y: 10, scale: 0.95, filter: 'blur(10px)' }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          className="fixed inset-x-4 top-20 mx-auto w-auto max-w-md md:absolute md:right-0 md:left-auto md:top-full md:mt-2 md:w-[380px] md:max-w-none bg-white rounded-3xl border border-slate-100 z-50 overflow-hidden font-sans shadow-xl shadow-slate-950/5"
+          className="fixed inset-x-4 top-[calc(env(safe-area-inset-top)+4.5rem)] mx-auto w-auto max-w-md md:absolute md:right-0 md:left-auto md:top-full md:mt-2 md:w-[380px] md:max-w-none bg-white rounded-3xl border border-slate-100 z-50 overflow-hidden font-sans shadow-xl shadow-slate-950/5"
         >
           {/* Header */}
           <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">

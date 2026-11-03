@@ -144,7 +144,7 @@ export function TopHeader() {
 
   return (
     <>
-      <header className="shrink-0 h-14 w-full bg-white border-b border-slate-100 flex items-center justify-between lg:justify-end pl-4 pr-4 sm:px-6 pt-safe sticky top-0 z-40">
+      <header className="shrink-0 min-h-14 w-full bg-white border-b border-slate-100 flex items-center justify-between lg:justify-end pl-4 pr-4 sm:px-6 pt-safe sticky top-0 z-40">
         {/* Hamburger (mobile) */}
         <button
           onClick={() => setDrawerOpen(true)}

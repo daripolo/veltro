@@ -47,7 +47,7 @@ export default function MobileBottomNav() {
                 )}
                 <Icon size={24} color="currentColor" className="relative z-10" />
               </div>
-              <span className={`text-[9px] font-black uppercase tracking-tighter mt-1 transition-colors ${
+              <span className={`text-[10px] font-black uppercase tracking-tighter mt-1 transition-colors ${
                 isActive ? 'text-primary' : 'text-slate-400'
               }`}>
                 {item.name}

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Redesign the authenticated banking experience in `src/app/(auth)` into one coherent, accessible, responsive Finguard-style dashboard system. The supplied image is the visual reference for **layout principles**—calm warm canvas, compact white surfaces, clear financial hierarchy, a rail navigation pattern, metric cards, and dense but readable activity data. It is not a source for product name, user data, account values, or brand assets.
+Redesign the authenticated banking experience in `src/app/(auth)` into one coherent, accessible, responsive Veltro-style dashboard system. The supplied image is the visual reference for **layout principles**—calm warm canvas, compact white surfaces, clear financial hierarchy, a rail navigation pattern, metric cards, and dense but readable activity data. It is not a source for product name, user data, account values, or brand assets.
 
 This document is intentionally implementation-ready. A new engineer or AI model should be able to continue from any phase without changing the data model or breaking existing banking workflows.
 
@@ -36,7 +36,7 @@ This document is intentionally implementation-ready. A new engineer or AI model 
 ### What is already working
 
 - `src/app/(auth)/layout.tsx` owns access control and has a desktop sidebar shell.
-- `src/app/(auth)/components/Sidebar.tsx`, `TopHeader.tsx`, and home components show the intended newer light Finguard direction.
+- `src/app/(auth)/components/Sidebar.tsx`, `TopHeader.tsx`, and home components show the intended newer light Veltro direction.
 - Home already connects to real Convex account, card, and transaction data.
 - Recharts, Framer Motion, Solar icons, Radix packages, Tailwind v4, and shared `Button`, `Card`, and `Dialog` building blocks are already installed.
 - Mobile navigation, notification data, avatar data, and several complete money workflows exist and can be retained behind the new visual primitives.
@@ -87,7 +87,7 @@ The dashboard should feel like a composed financial workspace: users immediately
 
 ### Brand decision to resolve before implementation
 
-The audited code contains both **Finguard** and **Arxforth** naming. Preserve the product's approved canonical name and logo in the new system. Until the product owner confirms it, centralize display name, tag line, and logo source in one `brand.ts` configuration file; do not hard-code either name in new components.
+The audited code still contains legacy product and domain naming. Preserve the product's approved canonical name and logo in the new system. Until the product owner confirms it, centralize display name, tag line, and logo source in one `brand.ts` configuration file; do not hard-code either name in new components.
 
 ## Target information architecture
 
@@ -400,7 +400,7 @@ Minimum touch target: 44 by 44 CSS pixels for interactive controls. Every route 
 ## Handoff progress log
 
 - [x] Inspected the authenticated route group, existing shared components, home components, global tokens, and installed UI dependencies.
-- [x] Identified the light Finguard shell versus legacy dark Arxforth shell split.
+- [x] Identified the light Veltro shell versus legacy dark shell split.
 - [x] Defined a target visual system, reusable component inventory, migration order, QA, and risk controls.
 - [ ] Capture baseline screenshots and confirm canonical product brand / cross-currency aggregation policy.
 - [ ] Implement Phase 1 shared tokens and `DashboardShell`.

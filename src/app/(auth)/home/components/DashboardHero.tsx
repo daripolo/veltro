@@ -100,7 +100,7 @@ export default function DashboardHero() {
             <div className="relative space-y-6">
               <div>
                 <p className="text-sm text-slate-400 font-medium mb-1">Your balance</p>
-                <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tighter text-slate-900">
+                <h2 className="text-[clamp(1.75rem,8vw,3.75rem)] font-extrabold tracking-tighter text-slate-900 tabular-nums break-words">
                   {showBalances ? formatBalance(acc.balance ?? 0, currencyCode) : '••••••'}
                 </h2>
               </div>

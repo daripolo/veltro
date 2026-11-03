@@ -75,8 +75,6 @@ export function PartnersRow() {
         <Carousel
           label="Payment networks and partners"
           arrows="sides"
-          dots={false}
-          controlsClassName="hidden"
           className="mt-12"
           sideArrowLeftClassName="left-3 sm:left-6 lg:left-10"
           sideArrowRightClassName="right-3 sm:right-6 lg:right-10"

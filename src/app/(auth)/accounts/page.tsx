@@ -322,7 +322,7 @@ export default function AccountsPage() {
 
             <div>
               <p className="text-slate-400 font-medium mb-1">Local Account</p>
-              <h2 className="text-4xl font-bold text-slate-900 tracking-tight">
+              <h2 className="text-[clamp(1.5rem,6vw,2.25rem)] font-bold text-slate-900 tracking-tight tabular-nums break-words">
                 {formatBalance(balances.local, local?.currency)}
               </h2>
               <div className="flex items-center gap-2 mt-2">
@@ -371,7 +371,7 @@ export default function AccountsPage() {
 
             <div>
               <p className="text-slate-400 font-medium mb-1">International Account</p>
-              <h2 className="text-4xl font-bold text-slate-900 tracking-tight">
+              <h2 className="text-[clamp(1.5rem,6vw,2.25rem)] font-bold text-slate-900 tracking-tight tabular-nums break-words">
                 {formatBalance(balances.international, international?.currency)}
               </h2>
               <div className="flex items-center gap-2 mt-2">

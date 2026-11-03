@@ -64,7 +64,7 @@ function resetPasswordHtml(name: string, url: string): string {
 export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
     return {
         baseURL: siteUrl,
-        trustedOrigins: ["http://localhost:3000", "https://veltroonline.online", "veltroonline.online"],
+        trustedOrigins: ["http://localhost:3000", "https://veltroonline.online", "https://www.veltroonline.online"],
         socialProviders: {
             google: {
                 clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -78,7 +78,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
                 const resend = new Resend(process.env.RESEND_API_KEY!);
                 const html = resetPasswordHtml(user.name, url);
                 await resend.emails.send({
-                    from: "Veltro <onboarding@arxforthdigital.com>",
+                    from: "Veltro <onboarding@veltroonline.online>",
                     to: user.email,
                     subject: "Reset your password",
                     html,
@@ -91,7 +91,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
                 const resend = new Resend(process.env.RESEND_API_KEY!);
                 const html = verifyEmailHtml(user.name, url);
                 await resend.emails.send({
-                    from: "Veltro <onboarding@arxforthdigital.com>",
+                    from: "Veltro <onboarding@veltroonline.online>",
                     to: user.email,
                     subject: "Verify your email",
                     html,

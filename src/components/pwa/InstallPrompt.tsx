@@ -8,9 +8,8 @@ import {
   Share,
 } from "@solar-icons/react-perf/Linear";
 
-/** localStorage key so a dismissed banner stays dismissed. Kept under the
- * legacy `finguard:` prefix so existing installs don't get re-prompted. */
-const DISMISSED_KEY = "finguard:pwa-install-dismissed";
+/** localStorage key so a dismissed banner stays dismissed. */
+const DISMISSED_KEY = "veltro:pwa-install-dismissed";
 
 /**
  * Routes where an install nudge is noise — the user is mid-signup or
