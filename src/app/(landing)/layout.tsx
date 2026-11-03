@@ -1,5 +1,5 @@
 
-import type { Viewport } from "next";
+import type { Metadata, Viewport } from "next";
 import { api } from "@/convex/_generated/api";
 import { fetchAuthQuery } from "@/src/lib/auth-server";
 import { redirect } from "next/navigation";
@@ -8,6 +8,23 @@ import { PropsWithChildren } from "react";
 // The marketing page is a dark editorial canvas, unlike the light dashboard.
 export const viewport: Viewport = {
   themeColor: "#0B0B0B",
+};
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
 };
 
 export default async function LandingLayout({ children }: PropsWithChildren) {

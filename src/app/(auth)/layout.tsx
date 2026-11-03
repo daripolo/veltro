@@ -1,11 +1,20 @@
 
 import { PropsWithChildren } from "react";
+import type { Metadata } from "next";
 import { fetchAuthQuery } from "@/src/lib/auth-server";
 import { redirect } from "next/navigation";
 import { Sidebar } from "./components/Sidebar";
 import { TopHeader } from "./components/TopHeader";
 import MobileBottomNav from "@/components/feature/MobileBottomNav";
 import { api } from "@/convex/_generated/api";
+
+// Authenticated screens must never appear in search results.
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 
 export default async function DashboardLayout({ children }: PropsWithChildren) {
