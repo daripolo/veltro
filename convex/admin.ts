@@ -1,6 +1,9 @@
 import { ConvexError, v } from "convex/values";
-import { query, mutation } from "./_generated/server";
+import { query, mutation, type QueryCtx, type MutationCtx } from "./_generated/server";
 import type { Doc, Id } from "./_generated/dataModel";
+import { authComponent } from "./auth";
+
+type AdminCtx = QueryCtx | MutationCtx;
 
 function isAdminEmail(email: string | null | undefined): boolean {
   if (!email) return false;
@@ -11,26 +14,38 @@ function isAdminEmail(email: string | null | undefined): boolean {
   return admins.length > 0 && admins.includes(email.toLowerCase());
 }
 
-async function requireAdmin(ctx: {
-  auth: { getUserIdentity: () => Promise<unknown> };
-}) {
-  const identity = (await ctx.auth.getUserIdentity()) as {
-    email?: string | null;
-  } | null;
-  if (!identity || !isAdminEmail(identity.email)) {
+/**
+ * Better Auth does not always expose the email on the Convex identity token.
+ * Fall back to the Better Auth user record so `ADMIN_EMAILS` still matches.
+ */
+async function getViewerEmail(ctx: AdminCtx): Promise<string | null> {
+  const identity = await ctx.auth.getUserIdentity();
+  if (typeof identity?.email === "string" && identity.email.trim()) {
+    return identity.email;
+  }
+
+  try {
+    const authUser = await authComponent.safeGetAuthUser(ctx);
+    return typeof authUser?.email === "string" && authUser.email.trim()
+      ? authUser.email
+      : null;
+  } catch {
+    // Unauthenticated or expired sessions simply aren't admins.
+    return null;
+  }
+}
+
+async function requireAdmin(ctx: AdminCtx) {
+  const email = await getViewerEmail(ctx);
+  if (!isAdminEmail(email)) {
     throw new ConvexError("Forbidden");
   }
-  return identity;
+  return email;
 }
 
 export const isAdmin = query({
   args: {},
-  handler: async (ctx) => {
-    const identity = (await ctx.auth.getUserIdentity()) as {
-      email?: string | null;
-    } | null;
-    return isAdminEmail(identity?.email);
-  },
+  handler: async (ctx) => isAdminEmail(await getViewerEmail(ctx)),
 });
 
 export const getAllUsers = query({

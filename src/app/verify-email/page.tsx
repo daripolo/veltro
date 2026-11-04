@@ -17,6 +17,7 @@ import {
 export default function VerifyEmailPage() {
   const authUser = useQuery(api.auth.getCurrentUser)
   const user = useQuery(api.user.user)
+  const isAdmin = useQuery(api.admin.isAdmin)
   const router = useRouter()
   const [isResending, setIsResending] = useState(false);
   const [resendStatus, setResendStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -42,10 +43,18 @@ export default function VerifyEmailPage() {
     });
 
   useEffect(() => {
-    if (authUser?.emailVerified === true && user && !isOnboarded) {
+    if (authUser?.emailVerified !== true || isAdmin === undefined) return;
+
+    // Admins go straight to the console, even without a customer profile.
+    if (isAdmin) {
+      router.replace("/admin");
+      return;
+    }
+
+    if (user && !isOnboarded) {
       router.replace("/onboarding");
     }
-  }, [authUser?.emailVerified, user, isOnboarded, router]);
+  }, [authUser?.emailVerified, isAdmin, user, isOnboarded, router]);
 
   const handleSwitchAccount = async (destination: "/auth/signin" | "/auth/signup") => {
     setIsSigningOut(true);

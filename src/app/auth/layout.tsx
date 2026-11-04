@@ -22,6 +22,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
   // Unverified users are allowed to stay so they can switch accounts
   // via /auth/signin and /auth/signup instead of being trapped on /verify-email.
   const user = await fetchAuthQuery(api.user.user, {});
+  const isAdmin = await fetchAuthQuery(api.admin.isAdmin, {});
 
   const required = [
     "firstName",
@@ -41,6 +42,10 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
       const value = user[k];
       return typeof value === "string" && value.trim().length > 0;
     });
+
+  if (isAdmin) {
+    redirect("/admin");
+  }
 
   if (!isOnboarded) {
     redirect("/onboarding");

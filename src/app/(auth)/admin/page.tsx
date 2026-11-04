@@ -44,7 +44,12 @@ function AccessDenied() {
 
 export default function AdminPage() {
   const isAdmin = useQuery(api.admin.isAdmin);
-  const allUsers = useQuery(api.admin.getAllUsers);
+  // Don't fire the admin-only query for non-admins — it would throw instead of
+  // letting the page render its "Access Denied" state.
+  const allUsers = useQuery(
+    api.admin.getAllUsers,
+    isAdmin === true ? {} : "skip",
+  );
   const [search, setSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState<Doc<"user"> | null>(null);
 

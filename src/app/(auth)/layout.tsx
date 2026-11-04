@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { Sidebar } from "./components/Sidebar";
 import { TopHeader } from "./components/TopHeader";
 import MobileBottomNav from "@/components/feature/MobileBottomNav";
+import AdminRedirect from "@/components/auth/AdminRedirect";
 import { api } from "@/convex/_generated/api";
 
 // Authenticated screens must never appear in search results.
@@ -18,9 +19,8 @@ export const metadata: Metadata = {
 
 
 export default async function DashboardLayout({ children }: PropsWithChildren) {
-  // 1️⃣ Fetch current user identity and profile from Convex
+  // 1️⃣ Fetch current user identity from Convex
   const identity = await fetchAuthQuery(api.auth.getCurrentUser, {});
-  const user = await fetchAuthQuery(api.user.user, {});
   // 2️⃣ Not logged in → redirect to sign-in
   if (!identity) {
     redirect("/auth/signin");
@@ -31,8 +31,9 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
     redirect("/verify-email");
   }
 
-  // 4️⃣ Check onboarding completion
-
+  // 4️⃣ Check onboarding completion (admins don't need the customer profile)
+  const isAdmin = await fetchAuthQuery(api.admin.isAdmin, {});
+  const user = await fetchAuthQuery(api.user.user, {});
   const required = [
     "firstName",
     "lastName",
@@ -53,13 +54,14 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
     });
 
   // 5️⃣ Not onboarded → redirect to onboarding
-  if (!isOnboarded) {
+  if (!isOnboarded && !isAdmin) {
     redirect("/onboarding");
   }
 
   // ✅ All checks passed, render dashboard content
   return (
     <div className="flex bg-[#F5F0E8] h-dvh">
+      <AdminRedirect />
       <Sidebar />
       <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
         <TopHeader />
