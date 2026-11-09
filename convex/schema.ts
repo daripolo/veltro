@@ -105,6 +105,7 @@ export default defineSchema({
     currency: v.optional(v.string()),
     region: v.optional(v.string()),
     balance: v.number(),
+    email: v.optional(v.string()),
     interestRate: v.string(),
     availableCredit: v.optional(v.number()),
     creditUsed: v.optional(v.number()),

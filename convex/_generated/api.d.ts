@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as accountEmail from "../accountEmail.js";
 import type * as accounts from "../accounts.js";
 import type * as actions_wallet_chains from "../actions/wallet/chains.js";
 import type * as actions_wallet_derive from "../actions/wallet/derive.js";
@@ -36,6 +37,7 @@ import type * as listeners_tron from "../listeners/tron.js";
 import type * as listeners_utxo from "../listeners/utxo.js";
 import type * as listeners_xrp from "../listeners/xrp.js";
 import type * as loans from "../loans.js";
+import type * as migrations from "../migrations.js";
 import type * as notifications from "../notifications.js";
 import type * as requestcard from "../requestcard.js";
 import type * as savingsGoals from "../savingsGoals.js";
@@ -52,6 +54,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  accountEmail: typeof accountEmail;
   accounts: typeof accounts;
   "actions/wallet/chains": typeof actions_wallet_chains;
   "actions/wallet/derive": typeof actions_wallet_derive;
@@ -80,6 +83,7 @@ declare const fullApi: ApiFromModules<{
   "listeners/utxo": typeof listeners_utxo;
   "listeners/xrp": typeof listeners_xrp;
   loans: typeof loans;
+  migrations: typeof migrations;
   notifications: typeof notifications;
   requestcard: typeof requestcard;
   savingsGoals: typeof savingsGoals;

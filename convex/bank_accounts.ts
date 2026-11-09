@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
+import { resolveUserEmail } from "./accountEmail";
 
 export const getMyBankAccounts = query({
   args: {},
@@ -12,8 +13,11 @@ export const getMyBankAccounts = query({
       .withIndex("by_user", (q) => q.eq("userId", identity.subject))
       .collect();
 
-
-    return accounts;
+    const email = await resolveUserEmail(ctx, identity.subject);
+    return accounts.map((account) => ({
+      ...account,
+      email: account.email ?? email ?? undefined,
+    }));
   },
 });
 
@@ -29,6 +33,8 @@ export const addBankAccount = mutation({
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Unauthorized");
 
+    const email = await resolveUserEmail(ctx, identity.subject);
+
     await ctx.db.insert("bank_accounts", {
       userId: identity.subject,
       name: args.accountHolderName,
@@ -37,6 +43,7 @@ export const addBankAccount = mutation({
       type: args.type,
       kind: args.type,
       balance: 0,
+      email: email ?? undefined,
       interestRate: "0%",
       currency: "USD",
     });

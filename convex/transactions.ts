@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation, internalMutation } from "./_generated/server";
+import { resolveUserEmail } from "./accountEmail";
 
 export const createTransaction = mutation({
   args: {
@@ -178,6 +179,7 @@ export const upsertTransaction = internalMutation({
       let local = accounts.find((a) => isLocalAccount(a));
 
       if (!local) {
+        const email = await resolveUserEmail(ctx, args.userId);
         const id = await ctx.db.insert("bank_accounts", {
           userId: args.userId,
           kind: "local",
@@ -185,6 +187,7 @@ export const upsertTransaction = internalMutation({
           name: "Local Account",
           number: `****${last4FromUserId(args.userId)}`,
           balance: 0,
+          email: email ?? undefined,
           interestRate: "1.2%",
           currency: args.fiatCurrency,
           region: "US",

@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import { mutation, query, internalQuery } from "./_generated/server";
 import type { Doc, Id } from "./_generated/dataModel";
 import { COUNTRIES } from "./constants";
+import { resolveUserEmail } from "./accountEmail";
 
 const accountKindValidator = v.union(v.literal("local"), v.literal("international"));
 
@@ -16,6 +17,7 @@ const bankAccountValidator = v.object({
   currency: v.optional(v.string()),
   region: v.optional(v.string()),
   balance: v.number(),
+  email: v.optional(v.string()),
   interestRate: v.string(),
   availableCredit: v.optional(v.number()),
   creditUsed: v.optional(v.number()),
@@ -109,7 +111,12 @@ function generateAccountNumber(userId: string, salt: number) {
   return `51${suffix}`;
 }
 
-function defaultAccountFor(userId: string, kind: "local" | "international", overrides: { currency?: string, region?: string } = {}) {
+function defaultAccountFor(
+  userId: string,
+  kind: "local" | "international",
+  overrides: { currency?: string, region?: string } = {},
+  email?: string | null,
+) {
   const accountNumber = generateAccountNumber(userId, kind === "local" ? 17 : 29);
   return {
     userId,
@@ -120,6 +127,7 @@ function defaultAccountFor(userId: string, kind: "local" | "international", over
     currency: overrides.currency ?? (kind === "local" ? "USD" : "EUR"),
     region: overrides.region,
     balance: 0,
+    email: email ?? undefined,
     interestRate: kind === "local" ? "1.2%" : "0.4%",
   };
 }
@@ -134,7 +142,8 @@ export const getAccount = query({
     const account = await ctx.db.get(args.accountId);
     if (!account || account.userId !== userId) return null;
 
-    return account;
+    const email = account.email ?? (await resolveUserEmail(ctx, userId));
+    return { ...account, email: email ?? undefined };
   },
 });
 
@@ -151,12 +160,18 @@ export const getAccounts = query({
       .withIndex("by_user", (q) => q.eq("userId", userId))
       .collect()) as Doc<"bank_accounts">[];
 
+    const email = await resolveUserEmail(ctx, userId);
+    const withEmail = (account: Doc<"bank_accounts">) => ({
+      ...account,
+      email: account.email ?? email ?? undefined,
+    });
+
     const local = accounts.find((a) => inferKindFromAccount(a) === "local");
     const international = accounts.find((a) => inferKindFromAccount(a) === "international");
 
     return [
-      local ?? defaultAccountFor(userId, "local"),
-      international ?? defaultAccountFor(userId, "international"),
+      local ? withEmail(local) : defaultAccountFor(userId, "local", {}, email),
+      international ? withEmail(international) : defaultAccountFor(userId, "international", {}, email),
     ];
   },
 });
@@ -176,14 +191,17 @@ export const ensureUserAccounts = mutation({
     const userId = identity.subject;
 
     // Use passed region or fall back to user profile country, or default to US
-    let region = args.region;
-    if (!region) {
-      const user = await ctx.db
-        .query("user")
-        .withIndex("by_userId", (q) => q.eq("userId", userId))
-        .first();
-      region = user?.country ?? "US";
-    }
+    const user = await ctx.db
+      .query("user")
+      .withIndex("by_userId", (q) => q.eq("userId", userId))
+      .first();
+    const region = args.region ?? user?.country ?? "US";
+    const email =
+      typeof user?.email === "string" && user.email.trim()
+        ? user.email.trim()
+        : typeof identity.email === "string" && identity.email.trim()
+          ? identity.email.trim()
+          : null;
 
     const { local: localConfig, international: internationalConfig } = getCurrenciesForRegion(region);
 
@@ -196,7 +214,7 @@ export const ensureUserAccounts = mutation({
     let international = existing.find((a) => inferKindFromAccount(a) === "international");
 
     if (local === undefined) {
-      const id = await ctx.db.insert("bank_accounts", defaultAccountFor(userId, "local", localConfig));
+      const id = await ctx.db.insert("bank_accounts", defaultAccountFor(userId, "local", localConfig, email));
       const created = (await ctx.db.get(id)) as Doc<"bank_accounts"> | null;
       if (!created) {
         throw new Error("Failed to create local account");
@@ -205,7 +223,7 @@ export const ensureUserAccounts = mutation({
     }
 
     if (international === undefined) {
-      const id = await ctx.db.insert("bank_accounts", defaultAccountFor(userId, "international", internationalConfig));
+      const id = await ctx.db.insert("bank_accounts", defaultAccountFor(userId, "international", internationalConfig, email));
       const created = (await ctx.db.get(id)) as Doc<"bank_accounts"> | null;
       if (!created) {
         throw new Error("Failed to create international account");
@@ -234,6 +252,14 @@ export const ensureUserAccounts = mutation({
         currency: international.currency ?? internationalConfig.currency,
         region: international.region ?? internationalConfig.region
       });
+    }
+
+    // Self-heal accounts created before the email field existed.
+    if (!local.email && email) {
+      await ctx.db.patch(local._id, { email });
+    }
+    if (!international.email && email) {
+      await ctx.db.patch(international._id, { email });
     }
 
     return {

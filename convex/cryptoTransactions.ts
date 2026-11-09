@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { resolveUserEmail } from "./accountEmail";
 
 export const ingest = mutation({
   args: {
@@ -128,6 +129,7 @@ export const ingestAndCreditLocal = mutation({
 
     let local = accounts.find((a) => isLocalAccount(a));
     if (!local) {
+      const email = await resolveUserEmail(ctx, args.userId);
       const id = await ctx.db.insert("bank_accounts", {
         userId: args.userId,
         kind: "local",
@@ -135,6 +137,7 @@ export const ingestAndCreditLocal = mutation({
         name: "Local Account",
         number: `****${last4FromUserId(args.userId)}`,
         balance: 0,
+        email: email ?? undefined,
         interestRate: "1.2%",
       });
       const created = await ctx.db.get(id);
